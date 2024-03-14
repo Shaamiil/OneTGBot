@@ -4,6 +4,7 @@ from aiogram.types import (
     KeyboardButtonPollType
 )
 
+
 main = ReplyKeyboardMarkup(
     keyboard=[
         [
@@ -40,10 +41,10 @@ spec = ReplyKeyboardMarkup(
 data = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="Счета")
+            KeyboardButton(text="💶 Счета")
         ],
         [
-            KeyboardButton(text="Транзакции")
+            KeyboardButton(text="📊 Транзакции")
         ]
     ],
     resize_keyboard=True,
@@ -56,6 +57,9 @@ transactions = ReplyKeyboardMarkup(
         [
             KeyboardButton(text="Получить транзакции"),
             KeyboardButton(text="Создать транзакцию")
+        ],
+        [
+            KeyboardButton(text="🔙 Назад")
         ]
     ],
     resize_keyboard=True,
@@ -63,8 +67,11 @@ transactions = ReplyKeyboardMarkup(
 
 income = ReplyKeyboardMarkup(
     keyboard=[
-        [KeyboardButton(text="По доходам"),
-         KeyboardButton(text="По расходам")]
+        [KeyboardButton(text="📈 По доходам"),
+         KeyboardButton(text="📉 По расходам")],
+        [
+            KeyboardButton(text="🔙 Назад")
+        ]
     ],
     resize_keyboard=True,
     input_field_placeholder="Выберите тип",
@@ -75,11 +82,11 @@ income = ReplyKeyboardMarkup(
 account = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="Получить счета"),
-            KeyboardButton(text="Создать счет")
+            KeyboardButton(text="🧾 Получить счета"),
+            KeyboardButton(text="➕ Создать счет")
         ],
         [
-            KeyboardButton(text="Назад")
+            KeyboardButton(text="🔙 Назад")
         ]
     ],
     resize_keyboard=True,
