@@ -1,9 +1,11 @@
+import aiohttp
+from aiogram import types
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.types import (
     ReplyKeyboardMarkup,
     KeyboardButton,
     KeyboardButtonPollType
 )
-
 
 main = ReplyKeyboardMarkup(
     keyboard=[
@@ -55,8 +57,8 @@ data = ReplyKeyboardMarkup(
 transactions = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="Получить транзакции"),
-            KeyboardButton(text="Создать транзакцию")
+            KeyboardButton(text="💳 Получить транзакции"),
+            KeyboardButton(text="➕ Создать транзакцию")
         ],
         [
             KeyboardButton(text="🔙 Назад")
@@ -78,7 +80,6 @@ income = ReplyKeyboardMarkup(
     selective=True
 )
 
-
 account = ReplyKeyboardMarkup(
     keyboard=[
         [
@@ -89,5 +90,15 @@ account = ReplyKeyboardMarkup(
             KeyboardButton(text="🔙 Назад")
         ]
     ],
-    resize_keyboard=True,
+    resize_keyboard=True
+)
+
+income_expenses = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="📈 Доходы"),
+            KeyboardButton(text="📉 Расходы")
+        ]
+    ],
+    resize_keyboard=True
 )
