@@ -168,7 +168,7 @@ async def state_description_expenses(message: Message, state: FSMContext):
     ) as session:
         async with session.post(url=url, json=data) as resp:
             if resp.status == 406:
-                return message.answer(f'Недостаточно средст на счету')
+                return message.answer(f'Недостаточно средст на счету', reply_markup=reply.data)
             elif resp.status == 200:
                 await message.answer("Транзакция прошла успешно", reply_markup=reply.data)
     # print(data)

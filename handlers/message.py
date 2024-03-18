@@ -11,7 +11,7 @@ message_router = Router()
 key = '436545b7f7083fe5d098294c296ff748'
 
 
-@message_router.message(F.text.lower() == "Узнать погоду")
+@message_router.message(F.text.lower() == "узнать погоду")
 async def weather(message: Message, state: FSMContext):
     await message.answer("Введите город")
     await state.set_state("город")
