@@ -55,12 +55,6 @@ async def get_weather(message: Message, state: FSMContext):
 
 
 # Api 1C
-@message_router.message(Command("start"))
-async def data(message: Message):
-    await message.answer(
-        text=f'Привет, {message.from_user.first_name}\nВыберите данные',
-        reply_markup=reply.data
-    )
 
 
 @message_router.message(F.text == "💶 Счета")

@@ -34,6 +34,7 @@ async def state_sum(message: Message, state: FSMContext):
     url = "https://fg.shopfigaro.com/shamil/hs/account/oneAccount"
     data = {
         "nameAccount": account,
+        "userName": "Shamil",
         "sum": amount
     }
     connector = aiohttp.TCPConnector(ssl=False)
