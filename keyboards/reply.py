@@ -1,6 +1,3 @@
-import aiohttp
-from aiogram import types
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.types import (
     ReplyKeyboardMarkup,
     KeyboardButton,
@@ -98,6 +95,9 @@ income_expenses = ReplyKeyboardMarkup(
         [
             KeyboardButton(text="📈 Доходы"),
             KeyboardButton(text="📉 Расходы")
+        ],
+        [
+            KeyboardButton(text="🔙 Назад")
         ]
     ],
     resize_keyboard=True

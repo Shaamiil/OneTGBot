@@ -1,9 +1,11 @@
 import aiohttp
-import json
+
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import StateFilter
 from aiogram.types import Message
+from handlers.commands import find_name_by_id
+from handlers.get_api_OneC import get_account
 from keyboards import reply
 
 post_api_router = Router()
@@ -16,7 +18,7 @@ async def post_account(message: Message, state: FSMContext):
     await state.set_state("название")
 
 
-@post_api_router.message(StateFilter("название"))
+@post_api_router.message(StateFilter("название"), F.text)
 async def state_account(message: Message, state: FSMContext):
     account = str(message.text)
     await state.update_data({"account": account})
@@ -26,15 +28,19 @@ async def state_account(message: Message, state: FSMContext):
 
 @post_api_router.message(StateFilter("сумма_счета"))
 async def state_sum(message: Message, state: FSMContext):
-    amount = int(message.text)
+    amount = (message.text)
+    if not amount.isdigit():
+        return await message.answer("Введите сумму только из чисел")
     data = await state.get_data()
     account = data.get("account")
 
     # print(amount, account)
+    user_id = message.from_user.id
+    name = find_name_by_id(user_id)
     url = "https://fg.shopfigaro.com/shamil/hs/account/oneAccount"
     data = {
         "nameAccount": account,
-        "userName": "Shamil",
+        "userName": name,
         "sum": amount
     }
     connector = aiohttp.TCPConnector(ssl=False)
@@ -61,8 +67,17 @@ async def post_transaction_income(message: Message, state: FSMContext):
 
 @post_api_router.message(StateFilter("название транзакции"))
 async def state_account(message: Message, state: FSMContext):
+    accounts_code = {}
+    accounts_data = await get_account(message)
     account = str(message.text)
-    await state.update_data({"account": account})
+    for i in accounts_data:
+        accounts_code[i["nameAccount"]] = i["code"]
+    if account in accounts_code:
+        account_code = accounts_code[account]
+        await state.update_data({"account_code": account_code})
+    else:
+        return await message.answer("Ошибка: Введенное название счета не найдено в базе данных")
+
     await message.answer("Укажите тип транзакции")
     await state.set_state("тип")
 
@@ -70,15 +85,15 @@ async def state_account(message: Message, state: FSMContext):
 @post_api_router.message(StateFilter("тип"))
 async def state_type(message: Message, state: FSMContext):
     typee = str(message.text)
-    await state.update_data({"type": typee})
+    await state.update_data({"typee": typee})
     await message.answer("Укажите сумму")
     await state.set_state("сумма транзакции")
 
 
 @post_api_router.message(StateFilter("сумма транзакции"))
 async def state_sum(message: Message, state: FSMContext):
-    sum = int(message.text)
-    await state.update_data({"sum": sum})
+    summ = int(message.text)
+    await state.update_data({"summ": summ})
     await message.answer("Добавьте описание")
     await state.set_state("описание")
 
@@ -87,15 +102,18 @@ async def state_sum(message: Message, state: FSMContext):
 async def state__description_expenses(message: Message, state: FSMContext):
     description = str(message.text)
     data = await state.get_data()
-    account = data.get("account")
+    account = data.get("account_code")
     typee = data.get("typee")
-    sum = data.get("sum")
+    summ = data.get("summ")
 
+    user_id = message.from_user.id
+    name = find_name_by_id(user_id)
     url = "https://fg.shopfigaro.com/shamil/hs/postTransactions/transactionIncome"
     data = {
+        "userName": name,
         "nameAccount": account,
         "type": typee,
-        "sum": sum,
+        "sum": summ,
         "description": description
     }
     # print(data)
@@ -132,15 +150,15 @@ async def state_account_expenses(message: Message, state: FSMContext):
 @post_api_router.message(StateFilter("тип расходов"))
 async def state_type_expenses(message: Message, state: FSMContext):
     typee = str(message.text)
-    await state.update_data({"type": typee})
+    await state.update_data({"typee": typee})
     await message.answer("Укажите сумму")
     await state.set_state("сумма транзакции расходов")
 
 
 @post_api_router.message(StateFilter("сумма транзакции расходов"))
 async def state_sum_expenses(message: Message, state: FSMContext):
-    sum = int(message.text)
-    await state.update_data({"sum": sum})
+    summ = int(message.text)
+    await state.update_data({"summ": summ})
     await message.answer("Добавьте описание")
     await state.set_state("описание расходов")
 
@@ -151,13 +169,16 @@ async def state_description_expenses(message: Message, state: FSMContext):
     data = await state.get_data()
     account = data.get("account")
     typee = data.get("typee")
-    sum = data.get("sum")
+    summ = data.get("summ")
+    user_id = message.from_user.id
+    name = find_name_by_id(user_id)
 
     url = "https://fg.shopfigaro.com/shamil/hs/postTransactions/transactionExpenses"
     data = {
+        "userName": name,
         "nameAccount": account,
         "type": typee,
-        "sum": sum,
+        "sum": summ,
         "description": description
     }
     # print(data)

@@ -1,8 +1,8 @@
-import aiohttp
+
 import requests
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
-from aiogram.filters import StateFilter, Command
+from aiogram.filters import StateFilter
 from aiogram.types import Message
 
 from keyboards import builders, inline, reply
@@ -62,9 +62,10 @@ async def account(message: Message):
     await message.answer("Че хочешь", reply_markup=reply.account)
 
 
-@message_router.message(F.text == "🔙 Назад")
-async def account(message: Message):
+@message_router.message(F.text == "🔙 Назад", StateFilter)
+async def account(message: Message, state: FSMContext):
     await message.answer("Главное меню 🏦", reply_markup=reply.data)
+    await state.clear()
 
 
 @message_router.message(F.text == "📊 Транзакции")
