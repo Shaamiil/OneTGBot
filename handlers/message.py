@@ -80,4 +80,13 @@ async def transactions(message):
 
 @message_router.message(F.text == "➕ Создать транзакцию")
 async def transactions_income_expenses(message):
-    await message.answer("Выберите тип транзакций", reply_markup=reply.income_expenses)
+    await message.answer("Выберите транзакцию", reply_markup=reply.income_expenses)
+
+
+@message_router.message(F.text == "🗞 Типы")
+async def types(message):
+    await message.answer("Выбирай", reply_markup=reply.types)
+
+@message_router.message(F.text == "📈 Типы доходов")
+async def types_income(message):
+    await message.answer("Хотите:", reply_markup=reply.create_type_income)

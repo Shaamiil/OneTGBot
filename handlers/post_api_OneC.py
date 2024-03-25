@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import StateFilter
 from aiogram.types import Message
 from handlers.commands import find_name_by_id
-from handlers.get_api_OneC import get_account
+from handlers.get_api_OneC import get_account, get_type
 from keyboards import reply
 
 post_api_router = Router()
@@ -20,7 +20,13 @@ async def post_account(message: Message, state: FSMContext):
 
 @post_api_router.message(StateFilter("название"), F.text)
 async def state_account(message: Message, state: FSMContext):
+    accounts_code = {}
+    accounts_data = await get_account(message)
     account = str(message.text)
+    for i in accounts_data:
+        accounts_code[i["nameAccount"]] = i["code"]
+    if account in accounts_code:
+        return await message.answer("Такой счет уже существует")
     await state.update_data({"account": account})
     await message.answer("Введите сумму счета")
     await state.set_state("сумма_счета")
@@ -76,7 +82,7 @@ async def state_account(message: Message, state: FSMContext):
         account_code = accounts_code[account]
         await state.update_data({"account_code": account_code})
     else:
-        return await message.answer("Ошибка: Введенное название счета не найдено в базе данных")
+        return await message.answer("Такого счета не существует")
 
     await message.answer("Укажите тип транзакции")
     await state.set_state("тип")
@@ -84,8 +90,16 @@ async def state_account(message: Message, state: FSMContext):
 
 @post_api_router.message(StateFilter("тип"))
 async def state_type(message: Message, state: FSMContext):
-    typee = str(message.text)
-    await state.update_data({"typee": typee})
+    type_income_code = {}
+    type_income_data = await get_type(message)
+    type_income = str(message.text)
+    for i in type_income_data:
+        type_income_code[i["nameType"]] = i["code"]
+    if type_income in type_income_code:
+        type_income_code = type_income_code[type_income]
+        await state.update_data({"type_income": type_income})
+    else:
+        return await message.answer(f'Такого типа не существует\nХотите его создать?', reply_markup=reply.create_type_income)
     await message.answer("Укажите сумму")
     await state.set_state("сумма транзакции")
 
@@ -103,7 +117,7 @@ async def state__description_expenses(message: Message, state: FSMContext):
     description = str(message.text)
     data = await state.get_data()
     account = data.get("account_code")
-    typee = data.get("typee")
+    typee = data.get("type_income")
     summ = data.get("summ")
 
     user_id = message.from_user.id
@@ -141,8 +155,17 @@ async def post_transaction_expenses(message: Message, state: FSMContext):
 
 @post_api_router.message(StateFilter("название транзакции расходов"))
 async def state_account_expenses(message: Message, state: FSMContext):
+    accounts_code = {}
+    accounts_data = await get_account(message)
     account = str(message.text)
-    await state.update_data({"account": account})
+    for i in accounts_data:
+        accounts_code[i["nameAccount"]] = i["code"]
+    if account in accounts_code:
+        account_code = accounts_code[account]
+        await state.update_data({"account_code": account_code})
+    else:
+        return await message.answer("Такого счета не существует")
+    print(accounts_code)
     await message.answer("Укажите тип транзакции")
     await state.set_state("тип расходов")
 
@@ -167,7 +190,8 @@ async def state_sum_expenses(message: Message, state: FSMContext):
 async def state_description_expenses(message: Message, state: FSMContext):
     description = str(message.text)
     data = await state.get_data()
-    account = data.get("account")
+    account = data.get("account_code")
+    print(account)
     typee = data.get("typee")
     summ = data.get("summ")
     user_id = message.from_user.id
@@ -181,7 +205,7 @@ async def state_description_expenses(message: Message, state: FSMContext):
         "sum": summ,
         "description": description
     }
-    # print(data)
+    print(data)
     connector = aiohttp.TCPConnector(ssl=False)
 
     async with aiohttp.ClientSession(
@@ -195,3 +219,6 @@ async def state_description_expenses(message: Message, state: FSMContext):
                 await message.answer("Транзакция прошла успешно", reply_markup=reply.data)
     # print(data)
     await state.clear()
+
+
+

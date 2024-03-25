@@ -1,7 +1,7 @@
 import asyncio
 from aiogram import Bot, Dispatcher
 
-from handlers import commands, message, get_api_OneC, post_api_OneC
+from handlers import commands, message, get_api_OneC, post_api_OneC, type
 
 
 async def main():
@@ -9,6 +9,7 @@ async def main():
     dp = Dispatcher()
     dp.include_routers(
         message.message_router,
+        type.type_router,
         post_api_OneC.post_api_router,
         get_api_OneC.get_api_router,
         commands.commands_router
