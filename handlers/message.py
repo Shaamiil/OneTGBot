@@ -90,3 +90,7 @@ async def types(message):
 @message_router.message(F.text == "📈 Типы доходов")
 async def types_income(message):
     await message.answer("Хотите:", reply_markup=reply.create_type_income)
+
+@message_router.message(F.text == "📉 Типы расходов")
+async def types_expenses(message):
+    await message.answer("Хотите:", reply_markup=reply.create_type_expenses)

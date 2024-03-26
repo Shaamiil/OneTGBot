@@ -119,11 +119,24 @@ create_type_income = ReplyKeyboardMarkup(
     resize_keyboard=True
 )
 
+create_type_expenses = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton(text="➕ Создать тип расходов"),
+            KeyboardButton(text="🧾 Получить типы расходов")
+        ],
+        [
+            KeyboardButton(text="🔙 Назад")
+        ]
+    ],
+    resize_keyboard=True
+)
+
 types = ReplyKeyboardMarkup(
     keyboard=[
         [
             KeyboardButton(text="📈 Типы доходов"),
-            KeyboardButton(text="📉 Типы доходов")
+            KeyboardButton(text="📉 Типы расходов")
         ]
     ],
     resize_keyboard=True
